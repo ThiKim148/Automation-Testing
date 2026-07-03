@@ -1,0 +1,3 @@
+
+This is a website to practice testing automation
+https://automationexercise.com/
