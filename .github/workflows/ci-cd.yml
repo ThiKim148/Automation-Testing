@@ -1,0 +1,43 @@
+name: Automation Testing Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  run-automation-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Lấy code từ repo về máy ảo
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Cài đặt Python
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10' # Thay bằng version Python bạn đang dùng
+        cache: 'pip' # Tự động cache các thư viện pip
+
+    # 3. Cài đặt các thư viện từ file requirements.txt
+    - name: Install dependencies
+      run: |
+        python -m pip upgrade pip
+        pip install -r requirements.txt
+
+    # 4. Chạy Automation Test (Thay đổi lệnh dưới đây ĐÚNG với lệnh bạn chạy ở máy cục bộ)
+    # Ví dụ nếu bạn dùng pytest: pytest --alluredir=allure-results
+    - name: Run Tests
+      run: |
+        pytest --alluredir=allure-results
+
+    # 5. Sinh báo cáo Allure và upload Artifact (Nếu bạn có dùng bước này)
+    # (Bước này khớp với phần sinh 'allure-html-report' trong ảnh image_dbae66.png)
+    - name: Upload Allure Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: allure-html-report
+        path: allure-results
