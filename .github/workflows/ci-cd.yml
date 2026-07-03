@@ -6,6 +6,7 @@ on:
   pull_request:
     branches: [ "main" ]
 
+# Cấp quyền ghi trực tiếp vào hạ tầng GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -24,42 +25,39 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10' # Thay bằng version Python bạn đang dùng
-        cache: 'pip' # Tự động cache các thư viện pip
+        python-version: '3.10'
+        cache: 'pip'
 
-    # Bước 3: Cài đặt các gói phụ thuộc từ file requirements.txt
+    # 3. Cài đặt các gói phụ thuộc từ file requirements.txt
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install pytest  # Ép buộc máy ảo phải cài đặt pytest trước
+        pip install pytest
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-    # Bước 4: Chạy toàn bộ các kịch bản test (Cả API và UI)
+    # 4. Chạy kịch bản test API
     - name: Execute Automated Tests (API & UI)
       run: |
-        # Thêm tham số --alluredir để ép pytest xuất kết quả API vào đúng thư mục reports/allure-results
         python -m pytest -m api -v --alluredir=reports/allure-results
-  
-    # Bước 5: Biên dịch dữ liệu thô thành báo cáo Allure dạng HTML 
+
+    # 5. Biên dịch dữ liệu thô thành báo cáo Allure dạng HTML 
     - name: Generate Allure Report
-      if: always() # Luôn luôn chạy bước này kể cả khi test API có bị failed
+      if: always()
       uses: simple-elf/allure-report-action@master
       with:
         allure_results: reports/allure-results
         allure_report: reports/allure-report
         allure_history: reports/allure-history
-        keep_reports: 20 # Giữ lại lịch sử của 20 lần chạy gần nhất
+        keep_reports: 20
 
-    # Bước 6 (CD): Tự động đẩy trang báo cáo Allure lên GitHub Pages
+    # 6. Đóng gói thư mục báo cáo (Artifact) của Pages
     - name: Upload Pages Artifact
       if: always()
       uses: actions/upload-pages-artifact@v3
       with:
         path: reports/allure-report
 
-    - name: Deploy Allure Report to GitHub Pages
+    # 7. Deploy trực tiếp lên hạ tầng GitHub Pages (Thay thế cho bước bị lỗi 403)
+    - name: Deploy to GitHub Pages
       if: always()
-      uses: peaceiris/actions-gh-pages@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }} # Token tự động có sẵn của GitHub, không cần tạo thủ công
-        publish_dir: reports/allure-report # Thư mục chứa trang web báo cáo cần deploy
+      uses: actions/deploy-pages@v4
