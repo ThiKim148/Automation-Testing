@@ -1,0 +1,10 @@
+{
+    "user": {
+        "_id": "6a473de0241f9100157d82ad",
+        "firstName": "Test",
+        "lastName": "User",
+        "email": "test_kim_2026@fake.com",
+        "__v": 10
+    },
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2YTQ3M2RlMDI0MWY5MTAwMTU3ZDgyYWQiLCJpYXQiOjE3ODMwNjcyNjB9.1cDNNKt21qgmMI85Ep2q-_4JeQmX_TyDTnMrtMUWh9Y"
+}
