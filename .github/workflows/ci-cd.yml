@@ -32,12 +32,23 @@ jobs:
     # Bước 4: Chạy toàn bộ các kịch bản test (Cả API và UI)
     - name: Execute Automated Tests (API & UI)
       run: |
-        python -m pytest -m api -v
+        # Thêm tham số --alluredir để ép pytest xuất kết quả API vào đúng thư mục reports/allure-results
+        python -m pytest -m api -v --alluredir=reports/allure-results
   
-    # 5. Sinh báo cáo Allure và upload Artifact (Nếu bạn có dùng bước này)
-    # (Bước này khớp với phần sinh 'allure-html-report' trong ảnh image_dbae66.png)
-    - name: Upload Allure Results
-      uses: actions/upload-artifact@v4
+    # Bước 5: Biên dịch dữ liệu thô thành báo cáo Allure dạng HTML 
+    - name: Generate Allure Report
+      if: always() # Luôn luôn chạy bước này kể cả khi test API có bị failed
+      uses: simple-elf/allure-report-action@master
       with:
-        name: allure-html-report
-        path: allure-results
+        allure_results: reports/allure-results
+        allure_report: reports/allure-report
+        allure_history: reports/allure-history
+        keep_reports: 20 # Giữ lại lịch sử của 20 lần chạy gần nhất
+
+    # Bước 6 (CD): Tự động đẩy trang báo cáo Allure lên GitHub Pages
+    - name: Deploy Allure Report to GitHub Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }} # Token tự động có sẵn của GitHub, không cần tạo thủ công
+        publish_dir: reports/allure-report # Thư mục chứa trang web báo cáo cần deploy
