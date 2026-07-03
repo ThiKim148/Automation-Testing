@@ -32,7 +32,7 @@ jobs:
     # Bước 4: Chạy toàn bộ các kịch bản test (Cả API và UI)
     - name: Execute Automated Tests (API & UI)
       run: |
-        python -m pytest -v
+        python -m pytest -m api -v
   
     # 5. Sinh báo cáo Allure và upload Artifact (Nếu bạn có dùng bước này)
     # (Bước này khớp với phần sinh 'allure-html-report' trong ảnh image_dbae66.png)
