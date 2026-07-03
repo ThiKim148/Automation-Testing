@@ -105,5 +105,5 @@ Every execution on the main branch automatically updates the live test dashboard
 
 📊 View the Live Allure Report: https://thikim148.github.io/Automation-Testing/
 
-👤 Author
+## 👤 Author
 Hồ Thị Kim - Automation Test
