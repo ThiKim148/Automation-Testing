@@ -1,8 +1,21 @@
 {
     "valid_user": {
-        "firstName": "Test",
-        "lastName": "User",
+        "name": "Test User",
         "email": "test_kim_2026@fake.com",
-        "password": "myPassword"
+        "password": "123456",
+        "title": "Mr",
+        "birth_date": "1",
+        "birth_month": "1",
+        "birth_year": "2000",
+        "firstname": "Test",
+        "lastname": "User",
+        "company": "ABC Company",
+        "address1": "123 Nguyen Trai",
+        "address2": "District 1",
+        "country": "India",
+        "zipcode": "700000",
+        "state": "Ho Chi Minh",
+        "city": "Ho Chi Minh",
+        "mobile_number": "0123456789"
     }
 }
