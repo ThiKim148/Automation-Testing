@@ -23,3 +23,14 @@ class AuthClient:
             f"{AuthClient.BASE_URL}/verifyLogin",
             data=payload
         )
+        
+    @staticmethod
+    def delete_user(email, password):
+        payload = {
+            "email": email,
+            "password": password
+        }
+        return requests.delete(
+            f"{AuthClient.BASE_URL}/deleteAccount",
+            data=payload
+        )

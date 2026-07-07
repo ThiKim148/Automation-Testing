@@ -15,14 +15,13 @@ class TestAuthenticationAPI:
     def test_create_user_successfully(self, get_data):
 
         with allure.step("Load test data"):
-            # Dùng .copy() để không làm thay đổi dữ liệu gốc trong file JSON lưu ở bộ nhớ
-            user_payload = get_data("auth_data")["valid_user"].copy()
-            
-            random_email = f"test_kim_{int(time.time())}@fake.com"
-            user_payload["email"] = random_email
-            
-            # SỬA LỖI TẠI ĐÂY: Thay thế hoàn toàn allure.note bằng dynamic.description
-            allure.dynamic.description(f"Email ngẫu nhiên được tạo cho lượt test này: {random_email}")
+            user_payload = get_data("auth_data")["valid_user"]
+
+            allure.attach(
+                json.dumps(user_payload, indent=4),
+                "Request Payload",
+                allure.attachment_type.JSON
+            )
 
         with allure.step("Call Create Account API"):
             response = AuthClient.register_user(user_payload)
@@ -34,8 +33,10 @@ class TestAuthenticationAPI:
             )
 
         with allure.step("Verify response"):
-            assert response.status_code == 200 
+            assert response.status_code == 200
+
             response_data = response.json()
+
             assert response_data["responseCode"] == 201
             assert response_data["message"] == "User created!"
 
@@ -61,3 +62,24 @@ class TestAuthenticationAPI:
         response_data = response.json()
         assert response_data["responseCode"] == 200
         assert response_data["message"] == "User exists!"
+        
+    @allure.story("Xóa tài khoản")
+    @allure.title("Test case 03: Delete User")
+    def test_delete_user(self, get_data):
+        user_payload = get_data("auth_data")["valid_user"]
+
+        response = AuthClient.delete_user(
+            user_payload["email"],
+            user_payload["password"]
+        )
+
+        allure.attach(
+            response.text,
+            "Response",
+            allure.attachment_type.TEXT
+        )
+
+        assert response.status_code == 200
+        response_data = response.json()
+        assert response_data["responseCode"] == 200
+        assert response_data["message"] == "Account deleted!"
