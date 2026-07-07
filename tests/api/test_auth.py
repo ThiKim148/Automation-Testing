@@ -1,10 +1,8 @@
 import json
 import allure
 import pytest
-import time  # Thêm thư viện để tạo chuỗi ngẫu nhiên bằng timestamp
+import time
 from api.auth_client import AuthClient
-
-# KHÔNG IMPORT GET_DATA TỪ CONFEST NỮA!
 
 @allure.feature("Authentication API")
 @allure.suite("API Regression Test")
@@ -17,12 +15,14 @@ class TestAuthenticationAPI:
     def test_create_user_successfully(self, get_data):
 
         with allure.step("Load test data"):
-            user_payload = get_data("auth_data")["valid_user"]
+            # Dùng .copy() để không làm thay đổi dữ liệu gốc trong file JSON lưu ở bộ nhớ
+            user_payload = get_data("auth_data")["valid_user"].copy()
             
-            # GIẢI PHÁP SỐNG CÒN: Fake email bằng timestamp để không bao giờ bị trùng (400)
             random_email = f"test_kim_{int(time.time())}@fake.com"
             user_payload["email"] = random_email
-            allure.note(f"Email ngẫu nhiên được tạo cho lượt test này: {random_email}")
+            
+            # SỬA LỖI TẠI ĐÂY: Thay thế hoàn toàn allure.note bằng dynamic.description
+            allure.dynamic.description(f"Email ngẫu nhiên được tạo cho lượt test này: {random_email}")
 
         with allure.step("Call Create Account API"):
             response = AuthClient.register_user(user_payload)
@@ -34,9 +34,7 @@ class TestAuthenticationAPI:
             )
 
         with allure.step("Verify response"):
-            # Vỏ ngoài luôn là 200 OK theo thiết kế của trang Automation Exercise
             assert response.status_code == 200 
-
             response_data = response.json()
             assert response_data["responseCode"] == 201
             assert response_data["message"] == "User created!"
@@ -44,14 +42,10 @@ class TestAuthenticationAPI:
     @allure.story("Đăng nhập")
     @allure.title("Test case 02: Verify Login")
     def test_login_successfully(self, get_data):
-        """
-        LƯU Ý PHẢN BIỆN: Bài test này dùng email tĩnh từ file JSON.
-        Nó chỉ PASSED nếu tài khoản đó ĐÃ TỒN TẠI trên hệ thống.
-        """
+        # Lúc này user_payload sẽ lấy đúng email gốc (ví dụ: test_kim_2026@fake.com) 
+        # mà không bị ảnh hưởng bởi email ngẫu nhiên của bài test 1 nữa
         user_payload = get_data("auth_data")["valid_user"]
 
-        # Vì bài test 1 phía trên đã đổi email ngẫu nhiên, bài test 2 này 
-        # nên dùng một email cố định đã được đăng ký sẵn từ trước trên hệ thống (ví dụ: email mặc định trong JSON)
         response = AuthClient.login_user(
             user_payload["email"],
             user_payload["password"]
