@@ -26,3 +26,7 @@ def get_data():
             return json.load(f)
             
     return _read_file
+
+@pytest.fixture(scope="session")
+def test_user(get_data):
+    return get_data("auth_data")["valid_user"]
