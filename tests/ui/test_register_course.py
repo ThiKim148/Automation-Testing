@@ -9,6 +9,7 @@ from pages.register_course_page import RegisterCoursePage
 @allure.title("Verify register course with valid information")
 @allure.severity(allure.severity_level.CRITICAL)
 @pytest.mark.ui
+
 def test_register_course(driver):
 
     page = RegisterCoursePage(driver)

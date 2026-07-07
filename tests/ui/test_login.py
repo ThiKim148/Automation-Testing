@@ -7,6 +7,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 @allure.story("Đăng nhập thành công với tài khoản hợp lệ")
 @allure.severity(allure.severity_level.BLOCKER) # Chức năng cốt lõi, lỗi này sẽ block toàn bộ hệ thống
 @pytest.mark.ui
+
 def test_login(driver):
     # Khởi tạo Page Object
     login_page = LoginPage(driver)

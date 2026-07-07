@@ -2,7 +2,6 @@ import uuid
 
 import allure
 import pytest
-from conftest import driver
 from pages.register_page import RegisterPage
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -10,7 +9,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 @allure.story("Đăng ký thành công với tài khoản hợp lệ")
 @allure.severity(allure.severity_level.BLOCKER) # Chức năng cốt lõi, lỗi này sẽ block toàn bộ hệ thống
 @pytest.mark.ui
+
 def test_register(driver):
+    
     register_page = RegisterPage(driver)
     
     username = f"testuser_{uuid.uuid4().hex[:8]}"
