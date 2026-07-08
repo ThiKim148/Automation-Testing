@@ -40,6 +40,7 @@ jobs:
         allure_report: reports/allure-report
         allure_history: reports/allure-history
         keep_reports: 20
+        allure_report_url: https://Thikim148.github.io/${{ github.event.repository.name }}/
 
     # 4. Đóng gói thư mục báo cáo (Artifact) của Pages
     - name: Upload Pages Artifact
@@ -50,3 +51,9 @@ jobs:
     # 5. Deploy trực tiếp lên hạ tầng GitHub Pages thông qua Action kết nối nội bộ
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
+
+    # 6. Xuat link báo cáo Allure ra log để tiện theo dõi
+    - name: Output Allure Report URL
+      if: always() # Luôn xuất link báo cáo ra log, kể cả khi CI pass hay fail
+      run: |
+        echo "Allure Report URL: https://Thikim148.github.io/${{ github.event.repository.name }}/"
