@@ -49,52 +49,56 @@ Hosting: GitHub Pages
 ## 🔧 Local Setup
 ### Clone the repository:
 
-Bash
+```Bash
 git clone [https://github.com/ThiKim148/Automation-Testing.git](https://github.com/ThiKim148/Automation-Testing.git)
 cd Automation-Testing
+```
+
+```Bash
 Create and activate a virtual environment:
-
-Bash
 python -m venv venv
-
+```
 ### On Windows:
+```Bash
 .\venv\Scripts\activate
-
+```
 ### On macOS/Linux:
+```Bash
 source venv/bin/activate
 Install dependencies:
-
-### Bash
 pip install --upgrade pip
 pip install -r requirements.txt
-🎯 Test Execution
+```
+
+### 🎯 Test Execution
 Local Execution
 You can filter and run test suites locally using custom Pytest markers:
 
-### Run API Tests only:
-
-#### Bash
+```Bash
+Run API Tests only:
 python -m pytest -m api -v
 Run UI Tests only (Requires local server to be active):
-
-#### Bash
 python -m pytest -m ui -v
+```
+
+```Bash
 Generate Allure Report Locally
 To visualize test results on your local machine, execute the following commands:
 
-#### Bash
 Run tests and save raw data
 python -m pytest -m api --alluredir=reports/allure-results
+```
 
-### Serve the interactive report
+```Bash
+Serve the interactive report:
 allure serve reports/allure-results
-
+```
 ---
 
 ## 🔄 CI/CD & Deployment Workflow
 The project utilizes a modern decoupled workflow using GitHub Actions native deployment, keeping the repository clean from extra ghost branches (like gh-pages).
 
-Plaintext
+```Plaintext
 [ Code Push / PR ] 
        │
        ▼
@@ -110,7 +114,7 @@ Plaintext
 └─────────────────────────────┘ ──► Deploys directly to GitHub Pages
 Live Test Reports
 Every execution on the main branch automatically updates the live test dashboard.
-
+```
 ---
 
 ## 📊 View the Live Allure Report: https://thikim148.github.io/Automation-Testing/
