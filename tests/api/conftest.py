@@ -6,7 +6,7 @@ from api.auth_client import AuthClient
 @pytest.fixture(scope="class", autouse=True)
 def clean_test_account(test_user):
 
-    print("===== CLEANUP START =====")
+    print("Clean up started")
 
     response = AuthClient.delete_user(
         test_user["email"],
