@@ -32,5 +32,6 @@ class AuthClient:
         }
         return requests.delete(
             f"{AuthClient.BASE_URL}/deleteAccount",
-            data=payload
+            data=payload,
+            allow_redirects=False
         )
