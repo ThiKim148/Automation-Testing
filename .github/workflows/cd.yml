@@ -2,11 +2,11 @@ name: Allure Report CD
 
 on:
   workflow_run:
-    workflows: ["Automation Testing CI"] # Lắng nghe chính xác tên của file CI ở trên
+    workflows:
+      - Automation Testing CI
     types:
       - completed
 
-# Cấp quyền ghi trực tiếp vào hạ tầng GitHub Pages
 permissions:
   contents: read
   pages: write
@@ -15,20 +15,17 @@ permissions:
 jobs:
   deploy-report:
     runs-on: ubuntu-latest
-    # Chạy quy trình CD bất kể CI pass hay fail (để vẫn xem được báo cáo các case bị tạch)
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' }}
+    if: |
+      github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure'
 
-    # Tự động hiển thị link Web công khai tại mục Deployments của GitHub Actions
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-    # 1. Checkout mã nguồn để lấy cấu trúc folder
-    - name: Checkout code
+    - name: Checkout
       uses: actions/checkout@v4
 
-    # 2. Tải kết quả thô (.json) từ workflow CI chuyển sang
     - name: Download Raw Allure Results
       uses: actions/download-artifact@v4
       with:
@@ -37,20 +34,31 @@ jobs:
         run-id: ${{ github.event.workflow_run.id }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    # 3. Biên dịch dữ liệu thô thành báo cáo HTML tĩnh (Không gộp history cũ)
-    - name: Generate Allure Report
-      uses: simple-elf/allure-report-action@master
+    - name: Setup Java
+      uses: actions/setup-java@v4
       with:
-        allure_results: reports/allure-results
-        allure_report: allure-report
+        distribution: temurin
+        java-version: 17
 
-    # 4. Đóng gói thư mục báo cáo (Artifact) chuẩn bị cho việc publish web
+    - name: Install Allure CLI
+      run: |
+        ALLURE_VERSION=2.34.1
+
+        wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz
+        tar -zxvf allure-${ALLURE_VERSION}.tgz
+
+    - name: Verify Allure
+      run: allure --version
+
+    - name: Generate Allure Report
+      run: |
+        allure generate reports/allure-results \ --clean \ -o allure-report
+
     - name: Upload Pages Artifact
       uses: actions/upload-pages-artifact@v3
       with:
         path: allure-report
 
-    # 5. Deploy trực tiếp lên hạ tầng GitHub Pages và trả link về cho khối environment ở trên
     - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v4
       id: deploy
+      uses: actions/deploy-pages@v4
