@@ -21,6 +21,8 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
+    env:
+      ALLURE_VERSION: 2.34.1
 
     steps:
     - name: Checkout
@@ -42,8 +44,6 @@ jobs:
 
     - name: Install Allure CLI
       run: |
-        ALLURE_VERSION=2.34.1
-
         wget https://github.com/allure-framework/allure2/releases/download/${ALLURE_VERSION}/allure-${ALLURE_VERSION}.tgz
         tar -zxvf allure-${ALLURE_VERSION}.tgz
 
