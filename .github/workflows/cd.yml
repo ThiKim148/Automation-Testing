@@ -18,6 +18,10 @@ jobs:
     # Chạy quy trình CD bất kể CI pass hay fail (để vẫn xem được báo cáo các case bị tạch)
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' }}
 
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+
     steps:
     # 1. Checkout code để lấy cấu trúc dự án và các cấu hình lịch sử Allure
     - name: Checkout code
@@ -51,6 +55,7 @@ jobs:
     # 5. Deploy trực tiếp lên hạ tầng GitHub Pages thông qua Action kết nối nội bộ
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
+      id: deploy
 
     # 6. Xuat link báo cáo Allure ra log để tiện theo dõi
     - name: Output Allure Report URL

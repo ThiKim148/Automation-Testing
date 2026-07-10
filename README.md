@@ -65,6 +65,9 @@ python -m venv venv
 ### On macOS/Linux:
 ```Bash
 source venv/bin/activate
+```
+
+```Bash
 Install dependencies:
 pip install --upgrade pip
 pip install -r requirements.txt
@@ -77,6 +80,9 @@ You can filter and run test suites locally using custom Pytest markers:
 ```Bash
 Run API Tests only:
 python -m pytest -m api -v
+```
+
+```Bash
 Run UI Tests only (Requires local server to be active):
 python -m pytest -m ui -v
 ```
