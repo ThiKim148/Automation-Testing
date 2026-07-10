@@ -18,16 +18,17 @@ jobs:
     # Chạy quy trình CD bất kể CI pass hay fail (để vẫn xem được báo cáo các case bị tạch)
     if: ${{ github.event.workflow_run.conclusion == 'success' || github.event.workflow_run.conclusion == 'failure' }}
 
+    # Tự động hiển thị link Web công khai tại mục Deployments của GitHub Actions
     environment:
       name: github-pages
       url: ${{ steps.deploy.outputs.page_url }}
 
     steps:
-    # 1. Checkout code để lấy cấu trúc dự án và các cấu hình lịch sử Allure
+    # 1. Checkout mã nguồn để lấy cấu trúc folder
     - name: Checkout code
       uses: actions/checkout@v4
 
-    # 2. Tải kết quả thô từ workflow CI chuyển sang
+    # 2. Tải kết quả thô (.json) từ workflow CI chuyển sang
     - name: Download Raw Allure Results
       uses: actions/download-artifact@v4
       with:
@@ -36,30 +37,20 @@ jobs:
         run-id: ${{ github.event.workflow_run.id }}
         github-token: ${{ secrets.GITHUB_TOKEN }}
 
-    # 3. Biên dịch dữ liệu thô thành báo cáo Allure dạng HTML 
+    # 3. Biên dịch dữ liệu thô thành báo cáo HTML tĩnh (Không gộp history cũ)
     - name: Generate Allure Report
       uses: simple-elf/allure-report-action@master
       with:
         allure_results: reports/allure-results
         allure_report: allure-report
-        allure_history: allure-history
-        keep_reports: 20
-        allure_report_url: https://thikim148.github.io/${{ github.event.repository.name }}/
 
-    # 4. Đóng gói thư mục báo cáo (Artifact) của Pages
+    # 4. Đóng gói thư mục báo cáo (Artifact) chuẩn bị cho việc publish web
     - name: Upload Pages Artifact
       uses: actions/upload-pages-artifact@v3
       with:
         path: allure-report
 
-    # 5. Deploy trực tiếp lên hạ tầng GitHub Pages thông qua Action kết nối nội bộ
+    # 5. Deploy trực tiếp lên hạ tầng GitHub Pages và trả link về cho khối environment ở trên
     - name: Deploy to GitHub Pages
       uses: actions/deploy-pages@v4
       id: deploy
-
-    # 6. Xuat link báo cáo Allure ra log để tiện theo dõi
-    - name: Output Allure Report URL
-      if: always() # Luôn xuất link báo cáo ra log, kể cả khi CI pass hay fail
-      run: |
-        echo "### Allure Report URL" >> $GITHUB_STEP_SUMMARY
-        echo "Allure Report URL: https://thikim148.github.io/${{ github.event.repository.name }}/**" >> $GITHUB_STEP_SUMMARY
